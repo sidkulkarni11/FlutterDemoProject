@@ -15,6 +15,37 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "TIC ",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+              ),
+            ),
+            Text(
+              "TAC ",
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red
+              ),
+            ),
+            Text(
+              "TOE",
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: GridView(
           shrinkWrap: true,
