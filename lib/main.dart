@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo_project/dashboard.dart';
+import 'package:flutter_demo_project/tictactoe/dashboard.dart';
 
 void main() {
   runApp(const MyApp());
