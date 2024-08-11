@@ -87,34 +87,33 @@ class _DashboardState extends State<Dashboard> {
                       children: [
                         for (int i = 0; i < 9; i++) ...[
                           Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                if (ofXO[i] == "") {
-                                  if (whosTurn) {
-                                    ofXO[i] = "X";
-                                    whosTurn = false;
-                                  } else {
-                                    ofXO[i] = "O";
-                                    whosTurn = true;
-                                  }
+                              child: GestureDetector(
+                            onTap: () {
+                              if (ofXO[i] == "") {
+                                if (whosTurn) {
+                                  ofXO[i] = "X";
+                                  whosTurn = false;
+                                } else {
+                                  ofXO[i] = "O";
+                                  whosTurn = true;
                                 }
+                              }
 
-                                check(ofXO);
-                                setState(() {});
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: AppColors.xOBoxColor,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Text(
-                                  ofXO[i],
-                                  style: GoogleFonts.coiny(
-                                      fontSize: 70, color: AppColors.xOColor
-                                  ),
+                              check(context, ofXO);
+                              setState(() {});
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: AppColors.xOBoxColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text(
+                                ofXO[i],
+                                style: GoogleFonts.coiny(
+                                    fontSize: 70, color: AppColors.xOColor),
                               ),
                             ),
-                          )
+                          ))
                         ]
                       ],
                     ),
@@ -128,33 +127,33 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void check(List<dynamic> listOFXO) {
+  void check(BuildContext context, List<dynamic> listOFXO) {
     if (checkTicTacToeCondition(0, 1, 2, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(3, 4, 5, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(6, 7, 8, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(0, 4, 8, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(2, 4, 6, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(0, 3, 6, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(1, 4, 7, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (checkTicTacToeCondition(2, 5, 8, listOFXO)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + playerwon());
     } else if (listOFXO.every((element) => element.isNotEmpty)) {
-      showToast(playerwon());
+      showDialogOnWin(playerwon(), context);
       print("*******" + "draw");
     }
   }
@@ -172,6 +171,31 @@ class _DashboardState extends State<Dashboard> {
       return false;
     }
     return false;
+  }
+
+  void showDialogOnWin(String message, BuildContext context) {
+    isDisabled = true;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ofXO.clear();
+                    ofXO = List.generate(9, (index) => "");
+                    whosTurn = true;
+                    isDisabled = false;
+                    setState(() {});
+                  },
+                  child: Text("Restart"))
+            ],
+            title: Text(message),
+            content: Text(message),
+          );
+        });
   }
 
   void showToast(String message) {
