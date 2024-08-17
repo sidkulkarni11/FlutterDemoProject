@@ -15,8 +15,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Tic Tac To',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        brightness: Brightness.dark, // Use dark theme settings
+        scaffoldBackgroundColor: Colors.black, // Sets the background color for all scaffolds
+        canvasColor: Colors.black, // Background color for Material widgets like Drawer, etc.
+        cardColor: Colors.black, // Background color for Card widgets
+        // Define additional colors if needed
       ),
       home: const Dashboard(),
     );
