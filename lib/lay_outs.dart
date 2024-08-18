@@ -17,61 +17,65 @@ class _LayoutsPracState extends State<LayoutsPrac> {
         backgroundColor: Colors.amber,
         title: Text("Layouts"),
       ),
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for(int i= 0; i<70;i++) ...[
+                    Container(
+                      height: 70,
+                      width: 70,
+                      color: i%2 ==0 ? Colors.red : Colors.amber,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    )
+                  ]
+                ],
+
+              ),
+            ),
+            GridView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10
+              ),
               children: [
-                for(int i= 0; i<70;i++) ...[
+                for(int i = 0; i<= 50;i++)...[
                   Container(
-                    height: 70,
-                    width: 70,
+                    width: 150,
+                    height: 150,
                     color: i%2 ==0 ? Colors.red : Colors.amber,
-                  ),
-                  SizedBox(
-                    width: 10,
                   )
                 ]
               ],
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for(int i= 0; i<70;i++) ...[
+                    Container(
+                      height: 70,
+                      width: 70,
+                      color: i%2 ==0 ? Colors.red : Colors.amber,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    )
+                  ]
+                ],
 
+              ),
             ),
-          ),
-          Expanded(child: GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10
-            ),
-            children: [
-              for(int i = 0; i<= 50;i++)...[
-                Container(
-                  width: 150,
-                  height: 150,
-                  color: i%2 ==0 ? Colors.red : Colors.amber,
-                )
-              ]
-            ],
-          )),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for(int i= 0; i<70;i++) ...[
-                  Container(
-                    height: 70,
-                    width: 70,
-                    color: i%2 ==0 ? Colors.red : Colors.amber,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  )
-                ]
-              ],
-
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
