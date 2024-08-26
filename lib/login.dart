@@ -11,11 +11,19 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset("")
+            Container(
+                height: MediaQuery.of(context).size.height/2,
+                width: double.infinity,
+                child: Image.asset('assets/oracle.jpeg',
+                fit: BoxFit.cover,
+                )),
+            TextField(
+              
+            )
           ],
         ),
       ),
