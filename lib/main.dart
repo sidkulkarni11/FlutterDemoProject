@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_project/dashboard.dart';
+import 'package:flutter_demo_project/login.dart';
+import 'package:flutter_demo_project/splashscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Tic Tac To',
+      title: 'Movie App',
       theme: ThemeData(
         brightness: Brightness.dark, // Use dark theme settings
         scaffoldBackgroundColor: Colors.black, // Sets the background color for all scaffolds
@@ -21,7 +23,11 @@ class MyApp extends StatelessWidget {
         cardColor: Colors.black, // Background color for Card widgets
         // Define additional colors if needed
       ),
-      home: const Dashboard(),
+      home: const SplashScreen(),
+      routes: {
+        '/home': (context) => Dashboard(),
+        '/login': (context) => LoginScreen(),
+      },
     );
   }
 }
