@@ -23,17 +23,5 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class TicTacToGame extends StatefulWidget {
-  const TicTacToGame({super.key});
 
-  @override
-  State<TicTacToGame> createState() => _TicTacToGameState();
-}
-
-class _TicTacToGameState extends State<TicTacToGame> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
 
