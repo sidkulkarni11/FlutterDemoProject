@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,9 +12,19 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = false;
   final _formKey = GlobalKey<FormState>();
-
+  bool isSaveLogin = false;
+  
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  
+  setData() async{
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("username", usernameController.text);
+    preferences.setString("pass", passwordController.text);
+    preferences.setBool("login", true);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     setState(() {
                       if (_formKey.currentState?.validate() ?? false) {
                         if (un == "Sid" && pass == "Sid") {
+                          setData();
                           Navigator.pushReplacementNamed(context, '/home');
                         }
                         ScaffoldMessenger.of(context).showSnackBar(

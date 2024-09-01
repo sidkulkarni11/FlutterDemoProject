@@ -1,7 +1,7 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,24 +10,32 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late GifController _controller;
 
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = GifController(vsync: this);
+  getData() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    var islogin = preferences.getBool("login") ?? false;
 
     Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/login');
+      if (islogin) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     });
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    getData();
+    _controller = GifController(vsync: this);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
