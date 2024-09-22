@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo_project/dashboard.dart';
+
+import 'api_prac.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,15 +14,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Tic Tac To',
+      title: 'Api',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Dashboard(),
+      home:  ApiApp(),
     );
   }
+
+
 }
+
+
 
 
 
