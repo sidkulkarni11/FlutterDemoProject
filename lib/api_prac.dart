@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'modal/User.dart';
+
 class ApiApp extends StatefulWidget {
   const ApiApp({super.key});
 
@@ -13,7 +15,7 @@ class ApiApp extends StatefulWidget {
 }
 
 class _ApiAppState extends State<ApiApp> {
-  Map<String, dynamic>? userResponse;
+  List<User>? userResponse;
   bool isLoading = true;
 
   @override
@@ -35,17 +37,21 @@ class _ApiAppState extends State<ApiApp> {
   }
 
   Future<void> getUserDetails() async {
-    var person =
-    await http.get(Uri.parse("https://gorest.co.in/public-api/users"));
+    var response = await http.get(Uri.parse("https://gorest.co.in/public-api/users"));
 
-    if (person.statusCode == 200) {
-      var getDetails = jsonDecode(person.body);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List<User> users = (jsonData['data'] as List).map((userJson) {
+        return User.fromJson(userJson);
+      }).toList();
+
       setState(() {
-        userResponse = getDetails;
+        userResponse = users;
         isLoading = false;
       });
+
       // Save response to Shared Preferences
-      saveToSharedPreferences(getDetails);
+      saveToSharedPreferences(jsonData['data']);
     } else {
       print("Failed to load data from API");
       setState(() {
@@ -54,7 +60,7 @@ class _ApiAppState extends State<ApiApp> {
     }
   }
 
-  Future<void> saveToSharedPreferences(Map<String, dynamic> data) async {
+  Future<void> saveToSharedPreferences(List<dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userResponse', jsonEncode(data));
   }
@@ -63,12 +69,16 @@ class _ApiAppState extends State<ApiApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? jsonResponse = prefs.getString('userResponse');
     if (jsonResponse != null) {
+      List<dynamic> data = jsonDecode(jsonResponse);
+      List<User> users = data.map((userJson) {
+        return User.fromJson(userJson);
+      }).toList();
+
       setState(() {
-        userResponse = jsonDecode(jsonResponse);
+        userResponse = users;
         isLoading = false;
       });
     } else {
-      // Handle case where there is no saved data and no internet
       setState(() {
         isLoading = false;
       });
@@ -80,24 +90,20 @@ class _ApiAppState extends State<ApiApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("API Practical with Shared Preferences"),
+        title: const Text("API Practical with Shared Preferences"),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : userResponse == null
-          ? Center(child: Text("No Data Available"))
-          : Column(
-        children: [
-          Expanded(
-              child: ListView.builder(
-                itemCount: userResponse!["data"].length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(userResponse!["data"][index]["name"]),
-                  );
-                },
-              ))
-        ],
+          ? const Center(child: Text("No Data Available"))
+          : ListView.builder(
+        itemCount: userResponse!.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(userResponse![index].name),
+            subtitle: Text(userResponse![index].email),
+          );
+        },
       ),
     );
   }
