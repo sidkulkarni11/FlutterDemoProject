@@ -1,109 +1,64 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'modal/User.dart';
 
-class ApiApp extends StatefulWidget {
-  const ApiApp({super.key});
-
+class UserApiApp extends StatefulWidget {
   @override
-  State<ApiApp> createState() => _ApiAppState();
+  _UserApiAppState createState() => _UserApiAppState();
 }
 
-class _ApiAppState extends State<ApiApp> {
-  List<User>? userResponse;
-  bool isLoading = true;
+class _UserApiAppState extends State<UserApiApp> {
+  late Future<User> user;
 
   @override
   void initState() {
     super.initState();
-    loadUserDetails();
+    user = fetchUser();
   }
 
-  Future<void> loadUserDetails() async {
-    // Check internet connection
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
-      // No internet, load from Shared Preferences
-      await loadFromSharedPreferences();
-    } else {
-      // Internet available, fetch data from API
-      await getUserDetails();
-    }
-  }
-
-  Future<void> getUserDetails() async {
-    var response = await http.get(Uri.parse("https://gorest.co.in/public-api/users"));
+  Future<User> fetchUser() async {
+    final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users/1'));
 
     if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      List<User> users = (jsonData['data'] as List).map((userJson) {
-        return User.fromJson(userJson);
-      }).toList();
-
-      setState(() {
-        userResponse = users;
-        isLoading = false;
-      });
-
-      // Save response to Shared Preferences
-      saveToSharedPreferences(jsonData['data']);
+      return User.fromJson(json.decode(response.body));
     } else {
-      print("Failed to load data from API");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> saveToSharedPreferences(List<dynamic> data) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userResponse', jsonEncode(data));
-  }
-
-  Future<void> loadFromSharedPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonResponse = prefs.getString('userResponse');
-    if (jsonResponse != null) {
-      List<dynamic> data = jsonDecode(jsonResponse);
-      List<User> users = data.map((userJson) {
-        return User.fromJson(userJson);
-      }).toList();
-
-      setState(() {
-        userResponse = users;
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      print("No data in shared preferences and no internet connection.");
+      throw Exception('Failed to load user');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("API Practical with Shared Preferences"),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : userResponse == null
-          ? const Center(child: Text("No Data Available"))
-          : ListView.builder(
-        itemCount: userResponse!.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(userResponse![index].name),
-            subtitle: Text(userResponse![index].email),
-          );
-        },
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('User API Example')),
+        body: FutureBuilder<User>(
+          future: user,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Name: ${snapshot.data!.name}'),
+                  Text('Username: ${snapshot.data!.username}'),
+                  Text('Email: ${snapshot.data!.email}'),
+                  Text('Phone: ${snapshot.data!.phone}'),
+                  Text('Website: ${snapshot.data!.website}'),
+                  Text('Company: ${snapshot.data!.company.name}'),
+                  Text('CatchPhrase: ${snapshot.data!.company.catchPhrase}'),
+                  Text('Address: ${snapshot.data!.address.street}, ${snapshot.data!.address.city}'),
+                ],
+              );
+            } else {
+              return Center(child: Text('No data found'));
+            }
+          },
+        ),
       ),
     );
   }
